@@ -7,6 +7,9 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { CalendarModule } from 'primeng/calendar';
 import { MenuItem } from 'primeng/api';
+import { ApartmentDetailsService } from '../../service/apartment-details.service';
+import { ChangeDetectorRef, inject, OnInit } from '@angular/core';
+import { ApartmentDetails } from '../../Models/apartmentDetails.model';
 
 @Component({
   standalone: true,
@@ -25,41 +28,11 @@ import { MenuItem } from 'primeng/api';
 })
 export class ApartmentComponent {
   breadcrumbItems!: MenuItem[];
-  apartmentForm: FormGroup;
+  carService: ApartmentDetailsService = inject(ApartmentDetailsService);
+  ApartmentDetailes$!: ApartmentDetails[];
+  filteredApartment!: ApartmentDetails[];
 
   constructor(private fb: FormBuilder) {
- 
-    this.apartmentForm = this.fb.group({
-      apartmentId: [0, Validators.required],
-      buildingId: [null],
-      apartmentStatus: [null, Validators.required],
-      apartmentNumberByContract: [null, Validators.required],
-      apartmentSurfaceByContract: [null],
-      apartmentNumberByAddress: [null],
-      isDetachedApartment: [false],
-      isCompanyHasCompletedCommitments: [false, Validators.required],
-      isGivenPossessionOfTheApartment: [false, Validators.required],
-      isProducedLease: [false, Validators.required],
-      note: [''],
-      purchasDate: [null],
-      insertDate: [null, Validators.required],
-      updateDate: [null],
-      floor: [null],
-      apartmentOrShop: [null],
-      numberOfLease: [null],
-      addressByContract: [''],
-      noteEdit: [''],
-      noteEditStatus: [false],
-      floorString: [''],
-      hakiraFileName: [''],
-      numberOfLeaseString: ['']
-    });
-  }
-
-  onSubmit() {
-    if (this.apartmentForm.valid) {
-      console.log(this.apartmentForm.value);
-    }
   }
   ngOnInit() {
    console.log("kkkkkkkkkk");
@@ -69,5 +42,11 @@ export class ApartmentComponent {
       { label: 'רשימת בנקים', url: '/bank' }
     ];
   }
-
+  loadFare() {
+    this.carService.GetApartmentsByBuilding().subscribe((apartmentDetailes) => {
+      this.ApartmentDetailes$ = apartmentDetailes;
+      this.filteredApartment = apartmentDetailes;
+      console.log(apartmentDetailes);
+    });
+  }
 }
